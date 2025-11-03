@@ -71,37 +71,20 @@
 //     );
 // }
 
-import { useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 export default function DeprecatedRegister() {
     const router = useRouter();
-    
+
     useEffect(() => {
         // Redirect to login page with a small delay
         const timer = setTimeout(() => {
             router.push("/user/login");
         }, 1500);
-        
+
         return () => clearTimeout(timer);
-    }, []);
-
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
-
-        try {
-            const res = await axios.post("/api/user/auth/register", formData);
-            if (res.status === 201) {
-                setSuccess("Registration successful! Redirecting to login...");
-                setTimeout(() => router.push("/user/login"), 2000);
-            }
-        } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong");
-        }
-    };
+    }, [router]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
