@@ -8,8 +8,6 @@ export default function UsersList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [adminPassword1, setAdminPassword1] = useState("");
-  const [adminPassword2, setAdminPassword2] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const router = useRouter();
 
@@ -39,23 +37,15 @@ export default function UsersList() {
   };
 
   const deleteUser = async () => {
-    if (!adminPassword1 || adminPassword1 !== adminPassword2) {
-      alert("Passwords do not match or are empty.");
-      return;
-    }
-
     try {
       const res = await axios.post("/api/admin/users/delete-user", {
         userId: selectedUserId,
-        password: adminPassword1,
       });
 
       if (res.data.success) {
         alert("User deleted.");
         fetchUsers(); // Refresh
         setShowModal(false);
-        setAdminPassword1("");
-        setAdminPassword2("");
       } else {
         alert(res.data.message || "Failed to delete.");
       }
@@ -110,21 +100,8 @@ export default function UsersList() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
-              <h2 className="text-lg font-bold mb-4 text-gray-900">Confirm Admin Password</h2>
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="w-full mb-3 p-2 border border-gray-300 rounded"
-                value={adminPassword1}
-                onChange={(e) => setAdminPassword1(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Re-enter password"
-                className="w-full mb-4 p-2 border border-gray-300 rounded"
-                value={adminPassword2}
-                onChange={(e) => setAdminPassword2(e.target.value)}
-              />
+              <h2 className="text-lg font-bold mb-4 text-gray-900">Confirm Delete</h2>
+              <p className="text-sm text-gray-600 mb-4">Are you sure you want to delete this user? This action cannot be undone.</p>
               <div className="flex justify-end space-x-3">
                 <button
                   className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
@@ -136,7 +113,7 @@ export default function UsersList() {
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                   onClick={deleteUser}
                 >
-                  Delete User
+                  OK
                 </button>
               </div>
             </div>

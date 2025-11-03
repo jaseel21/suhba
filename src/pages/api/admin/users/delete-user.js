@@ -7,16 +7,15 @@ export default async function handler(req, res) {
 
   await db();
 
-  const { userId, password } = req.body;
-  console.log("Received request:", req.body);
+  const { userId } = req.body;
+  console.log("Received delete request for userId:", userId);
+
+  if (!userId) {
+    return res.status(400).json({ success: false, message: "Missing userId" });
+  }
 
   try {
-    // Check if the admin password matches the one in the .env file
-    if (password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ success: false, message: "Invalid admin password" });
-    }
-
-    // Delete the user
+    // Delete the user and their saved table data without additional auth check
     await User.findByIdAndDelete(userId);
     await UserTableData.deleteMany({ user: userId });
 
